@@ -2,6 +2,11 @@
 //初回のみ
 
 
+
+function randint(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
 function SetTriangles(cols){
     first_screen.innerHTML=''
     for(i=0;i<30;i++){

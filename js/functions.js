@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
-import { getFirestore, doc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+import { getFirestore, doc, setDoc, updateDoc, increment,collection,getDocs  } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -72,10 +72,19 @@ export async function Send(dic, callback) {
 
     }
     );
+  }else if(dic['method']=='pick'){
+    const querySnapshot = await getDocs(collection(db, "main"));
+    let L=[]
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+      let d=doc.data()
+      d['elm']=doc.id
+      L.push(d)
+    });
+      
+    callback(L)
+    
   }
 
-}
-
-function randint(max) {
-  return Math.floor(Math.random() * Math.floor(max));
 }

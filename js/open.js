@@ -1,8 +1,12 @@
-cookie = {}
-/*
-document.cookie.split(';').forEach(e => cookie[decodeURIComponent(e.split('=')[0])] = Number(e.split('=')[1]))
-*/
-data = [{ 'elm': 'オフラインです','user':'0','degre':'0'}]
+import {Send} from './functions.js'
+let cookie = {}
+
+if(document.cookie){
+    document.cookie.split(';').forEach(e => cookie[decodeURIComponent(e.split('=')[0])] = Number(e.split('=')[1]))
+}
+
+
+let data = [{ 'elm': 'オフラインです','vote_num':'0','degre':'0'}]
 
 /*
 data = [
@@ -13,31 +17,32 @@ data = [
 ]
 */
 
-ng_warning=[]
 
-Userid2Name={
-    '0':'anymous ',
-    '1':'みなりん ',
-    '2':'Ruinvil ',
-    '3':'Moscwa  ',
-    '4':'酔月　 　'
+function randint(max) {
+    return Math.floor(Math.random() * Math.floor(max));
 }
 
 //アニメーション起動＆要素の追加
-black_triangles_flag=false
+let black_triangles_flag=false
+let degree=0
+let element=''
+let vote_num=0
 function Lounch(data) {
-    counter=0
+    let counter=0
     while (true) {
         counter+=1
         if(counter>1000){
             window.alert('条件に合う要素が存在しません')
             return
         }
-        chosen = data[randint(data.length)]
+        let chosen = data[randint(data.length)]
         element=chosen['elm']
         degree=Number(chosen['degree'])
+        vote_num=Number(chosen['vote'])
 
-        flag=false
+        let flag=false
+        
+        /*
         for(i=0;i<ng_warning.length;i++){
             if (chosen['warning'] && chosen['warning'].includes(ng_warning[i])){
                 flag=true
@@ -47,18 +52,12 @@ function Lounch(data) {
         if(flag){
             continue
         }
+        */
 
-        if(chosen['user']){
-            user=Userid2Name[chosen['user']]//user_idの場合
-            if(!user){
-                user=chosen['user']//usernameを直入力の場合
-            }
-        }else{
-            user='anymous'
-        }
         if(! degree==undefined || !((max_deg==-1 || degree<=max_deg) && (min_deg==-1 || min_deg<=degree))){
             continue
         }
+        console.log(cookie)
         if (cookie[element]==undefined) {
             if(degree<=3){
                 cookie[element] = 0
@@ -74,7 +73,7 @@ function Lounch(data) {
         }
     }
     
-    stars=document.getElementsByClassName('star')
+    let stars=document.getElementsByClassName('star')
     for(i=0;i<stars.length;i++){
         if(i<degree){
             stars[i].style.display='block'
@@ -83,8 +82,8 @@ function Lounch(data) {
         }
     }
 
-    box_col='#00FFDD'//水色 
-    timeout=7700
+    let box_col='#00FFDD'//水色 
+    let timeout=7700
 
     if(degree==3){
         box_col='#ff9900'//金
@@ -120,26 +119,21 @@ function Lounch(data) {
         }, 1000)
     }, timeout)
 
-    tr = document.createElement('tr')
+    let tr = document.createElement('tr')
     element_h1.innerText = element
 
-    td = document.createElement('td')
+    let td = document.createElement('td')
     td.innerText = element
 
-    td2 = document.createElement('td')
+    let td2 = document.createElement('td')
     td2.innerText = ('★'.repeat(degree)+'　'.repeat(5)).slice(0,5)
 
-    td3 = document.createElement('td')
-    td3.innerText = user=='anymous '?user:'(hidden)'
-    td3.setAttribute('data-user',user)
-    td3.classList.add('data-user')
-    td3.addEventListener('click',function(){
-        this.innerText=this.getAttribute('data-user')
-    })
+    let td3 = document.createElement('td')
+    td3.innerText = vote_num
 
-    td_close = document.createElement('td')
+    let td_close = document.createElement('td')
     td_close.classList.add('uk-text-right')
-    span = document.createElement('span')
+    let span = document.createElement('span')
     span.setAttribute('uk-icon', 'icon:close')
     span.classList.add('pointer')
     span.addEventListener('click', function () {
@@ -161,7 +155,8 @@ function Lounch(data) {
     */
    now_covered_number.innerText='（うち未開封'+(data.length-Object.keys(cookie).length)+'個）'
 }
-params = {'sid':7}
+
+let params = {}
 try {
     (decodeURI(location.href).split('?')[1]).split('&').forEach(e => params[e.split('=')[0]] = e.split('=')[1])
 } catch (e) {
@@ -170,10 +165,15 @@ try {
 
 params['method']='pick'
 Send(params,CallBack)
+
 function CallBack(res){
-    data = eval(res)
+    data=res
     now_number.innerText = '現在登録されている属性は' + data.length + '個です！'
     now_covered_number.innerText='（うち未開封'+(data.length-Object.keys(cookie).length)+'個）'
+    let loader=document.getElementById('loader')
+    if(loader){
+      loader.style.display='None'
+    }
 }
 
 //キーボードショートカット
@@ -188,11 +188,6 @@ document.addEventListener('keydown', (e) => {
     }else if(e.code=='KeyS'){
         tmp=document.getElementById('settings')
         tmp.style.display=tmp.style.display=='block'?'none':'block'
-    }else if(e.code=='KeyO'){
-        usernames=document.getElementsByClassName('data-user')
-        for(i=0;i<usernames.length;i++){
-            usernames[i].innerText=usernames[i].getAttribute('data-user')
-        } 
     }
 })
 
@@ -205,7 +200,7 @@ document.getElementById('reload_btn').addEventListener('click', () => {
 })
 
 //リフレッシュ
-NowNo = 1
+let NowNo = 1
 function Refresh() {
     li = document.createElement('li')
     li.innerHTML = '<table  class="uk-table uk-table-striped"><tbody></tbody></table>'
@@ -227,8 +222,8 @@ document.getElementById('settings_btn').addEventListener('click', () => {
     document.getElementById('settings').style.display = 'block'
 })
 
-max_deg=-1
-min_deg=-1
+let max_deg=-1
+let min_deg=-1
 document.getElementById('close_settings').addEventListener('click', () => {
     document.getElementById('settings').style.display = 'none'
 })
