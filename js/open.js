@@ -90,7 +90,7 @@ function Lounch(data) {
             }else{
 
                 cookie[element]+=1
-                if(2**Math.floor(Math.log2(cookie[element]))==cookie[element]){
+                if(2**Math.floor(Math.log2(cookie[element]))==cookie[element] && cookie[element]>=4){
                     console.log(cookie)
                     break
                 }
