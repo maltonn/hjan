@@ -77,12 +77,11 @@ export async function Send(dic, callback) {
     let L=[]
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
       let d=doc.data()
       d['elm']=doc.id
       L.push(d)
     });
-      
+    console.log(L)
     callback(L)
     
   }

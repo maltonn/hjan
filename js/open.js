@@ -6,14 +6,15 @@ if(document.cookie){
 }
 
 
-let data = [{ 'elm': 'オフラインです','vote_num':'0','degre':'0'}]
+let data = [{ 'elm': 'オフラインです','vote_num':'1','degre':'0'}]
+
+let vote_weight_mode=true
+
 
 /*
 data = [
-    { 'elm': '要素1','user':'0','degree':'1'},
-    { 'elm': '要素2','user':'1','degree':'2'},
-    { 'elm': '要素3','user':'Moscwa','degree':'3'},
-    { 'elm': '要素4','user':'example','degree':'4'},
+    { 'elm': '要素1','vote':1,'degree':1,'warn':{'a':true,'b':false,'c':false},'uv':1},
+    ...
 ]
 */
 
@@ -27,22 +28,45 @@ let black_triangles_flag=false
 let degree=0
 let element=''
 let vote_num=0
+
+function VoteToScore(vote){
+    return Math.log(vote)/Math.log(1.5)+1
+}
+
 function Lounch(data) {
     let counter=0
     while (true) {
         counter+=1
-        if(counter>1000){
+        if(counter>10000){
             window.alert('条件に合う要素が存在しません')
             return
         }
-        let chosen = data[randint(data.length)]
+
+        let chosen=null
+        if(vote_weight_mode){
+            
+            let sum_vote=0
+            for(let i=0;i<data.length;i++){
+                sum_vote+=VoteToScore(data[i]['vote'])
+            }
+            let r=randint(sum_vote)
+            for(let i=0;i<data.length;i++){
+                r-=VoteToScore(data[i]['vote'])
+                if(r<0){
+                    chosen=data[i]
+                    break
+                }
+            } 
+        }else{
+            chosen = data[randint(data.length)]
+        }
         element=chosen['elm']
         degree=Number(chosen['degree'])
         vote_num=Number(chosen['vote'])
 
-        let flag=false
         
         /*
+        let flag=false
         for(i=0;i<ng_warning.length;i++){
             if (chosen['warning'] && chosen['warning'].includes(ng_warning[i])){
                 flag=true
@@ -57,20 +81,39 @@ function Lounch(data) {
         if(! degree==undefined || !((max_deg==-1 || degree<=max_deg) && (min_deg==-1 || min_deg<=degree))){
             continue
         }
-        console.log(cookie)
-        if (cookie[element]==undefined) {
-            if(degree<=3){
-                cookie[element] = 0
+        
+        //「複数ターンにわたって毎回○○が登場する」みたいなのを避けたい処理  
+        if(true){//レア度は関係ない
+            if (cookie[element]==undefined) {
+                cookie[element]=0
                 break
             }else{
-                cookie[element] = -1
-            }
-        } else {
-            cookie[element] += 1
-            if (cookie[element] % (degree<=3?5:7) == 0) {
-                break
+
+                cookie[element]+=1
+                if(2**Math.floor(Math.log2(cookie[element]))==cookie[element]){
+                    console.log(cookie)
+                    break
+                }
             }
         }
+        
+        /*レアな奴ほど出にくく
+        else{
+            if (cookie[element]==undefined) {
+                if(degree<=3){
+                    cookie[element] = 0
+                    break
+                }else{
+                    cookie[element] = -1
+                }
+            } else {
+                cookie[element] += 1
+                if (cookie[element] % (degree<=3?5:7) == 0) {
+                    break
+                }
+            }
+        }
+        */
     }
     
     let stars=document.getElementsByClassName('star')
@@ -197,21 +240,22 @@ document.getElementById('get_btn').addEventListener('click', () => {
 })
 document.getElementById('reload_btn').addEventListener('click', () => {
     Send(params,CallBack)
+    Refresh()
 })
 
 //リフレッシュ
 let NowNo = 1
 function Refresh() {
-    li = document.createElement('li')
+    let li = document.createElement('li')
     li.innerHTML = '<table  class="uk-table uk-table-striped"><tbody></tbody></table>'
     li.children[0].children[0].innerHTML = main_body.innerHTML
-    icons = [...li.getElementsByTagName('span')]//close iconを消す
-    for (icon of icons) {
+    let icons = [...li.getElementsByTagName('span')]//close iconを消す
+    for (let icon of icons) {
         icon.outerHTML = ''
     }
     switcher_contents.appendChild(li)
 
-    li2 = document.createElement('li')
+    let li2 = document.createElement('li')
     li2.innerHTML = '<a>No.' + NowNo + '</a>'
     NowNo++
     switcher.appendChild(li2)
