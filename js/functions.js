@@ -1,46 +1,79 @@
-function Send(dic,callback){
-  loader=document.getElementById('loader')
-  if(loader){
-    loader.style.display = 'block'
-  }
-  if (dic['method']=='add'){
-    dic['time']=Date.now()
-  }
-  
-  $(function () {
-    $.ajax({
-      url: 'https://sdyzrnc9i1.execute-api.us-east-2.amazonaws.com/default/light-api' + Dic2ParamString(dic),
-      type: 'GET',
-      //data:JSON.stringify(dic),
-      contentType: 'application/json',
-    })
-      .done((res) => {
-        console.log(res)
-        loader=document.getElementById('loader')
-        if(loader){
-          loader.style.display = 'none'
-        }
-        if(callback){
-          callback(res)
-        }
-      })
-      .fail((res) => {
-        loader.style.display = 'none'
-        window.alert('通信に失敗しました')
-        console.log(res);
-      })
-  });
-}
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
+import { getFirestore, doc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
 
-function Dic2ParamString(obj) {
-  let str = "?";
-  for (var key in obj) {
-    if (str != "") {
-      str += "&";
-    }
-    str += key + "=" + encodeURIComponent(obj[key]);
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCrMW9wVcTiM7rNEOY_zmAhFUOqfZf0eNU",
+  authDomain: "hjan-dice.firebaseapp.com",
+  projectId: "hjan-dice",
+  storageBucket: "hjan-dice.appspot.com",
+  messagingSenderId: "234654562752",
+  appId: "1:234654562752:web:b9792c7344beb35e1c7025",
+  measurementId: "G-3K1894JGHX"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+const db = getFirestore(app);
+
+/*
+export async function LoadContents(doc_id) {
+  const docRef = doc(db, "alpha2-1", doc_id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    document.getElementById('background').innerHTML = docSnap.data().html
+    AddClickEvent()
+  } else {
+    console.log("No such document!");
   }
-  return str
+
+}
+*/
+
+
+
+export async function Send(dic, callback) {
+
+  if (dic['method'] == 'add') {
+
+
+    let loader = document.getElementById('loader')
+    if (loader) {
+      loader.style.display = 'block'
+    }
+
+    let warns = {
+      'a': dic['warning'].includes('a'),
+      'b': dic['warning'].includes('b'),
+      'c': dic['warning'].includes('c'),
+    }
+
+
+    const ref = doc(db, 'main', dic['elm']);
+    await updateDoc(ref, {
+      vote: increment(Number(dic['vote_num'])),
+      uv: increment(1),
+      degree: Number(dic['degree']),
+      warns: warns,
+    }).then(callback()).catch(async err => {
+      await setDoc(ref, {
+        vote: Number(dic['vote_num']),
+        uv: 1,
+        degree: Number(dic['degree']),
+        warns: warns,
+      }).then().catch(err => console.log(err));
+
+    }
+    );
+  }
+
 }
 
 function randint(max) {
