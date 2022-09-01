@@ -40,15 +40,11 @@ export async function LoadContents(doc_id) {
 
 
 export async function Send(dic, callback) {
-
+  let loader = document.getElementById('loader')
+  if (loader) {
+    loader.style.display = 'block'
+  }
   if (dic['method'] == 'add') {
-
-
-    let loader = document.getElementById('loader')
-    if (loader) {
-      loader.style.display = 'block'
-    }
-
     let warns = {
       'a': dic['warning'].includes('a'),
       'b': dic['warning'].includes('b'),
@@ -84,6 +80,18 @@ export async function Send(dic, callback) {
     console.log(L)
     callback(L)
     
+  }else if(dic['method']=='fix'){
+    window.alert('工事中です！')
+    let loader=document.getElementById('loader')
+    if (loader){
+        loader.style.display='none'
+    }
+  }else if(dic['method']=='delete'){
+    window.alert('工事中です！')
+    let loader=document.getElementById('loader')
+    if (loader){
+        loader.style.display='none'
+    }
   }
 
 }
