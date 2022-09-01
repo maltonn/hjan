@@ -1,0 +1,221 @@
+﻿:root{
+  --bg-col:#E8EFF7;
+  --box-color:#00FFDD;
+  
+  --circle1:#a8006d;
+  --circle3:#bea620;
+  --circle5:#614983;
+  --start_of_1st_animation:2800ms;
+  --start_of_2nd_animation:4600ms;
+}
+#animation{
+  position: absolute;
+  margin: 0;
+  padding:0;
+  width:100vw;
+  height:100vh;
+  overflow: hidden;
+  background-color: var(--bg-col);
+}
+
+#box{
+  top:0;
+  left:0;
+  right:0;
+  bottom: 0;
+  margin:auto;
+  position: absolute;
+  width:30vmin;
+  height:30vmin;
+  transform: rotate(-45deg);
+  animation: drop 500ms ease-in 2000ms forwards;
+}
+#box_main{
+  position: absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color: var(--box-color);
+  overflow: hidden;
+}
+#box_border{
+  position: absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  border:3px solid var(--box-color);
+  animation : box_border_animation 1200ms infinite; 
+}
+#box_main::before{
+  content:'';
+  position: absolute;
+  width:50%;
+  height:300%;
+  top:-100%;
+  left:150%;
+  animation: box_light_animation 800ms linear 300ms;
+  background-color: white;
+  opacity: .8;
+  transform:rotate(-30deg);
+}
+
+@keyframes box_border_animation{
+  70%{
+      transform:scale(2);
+      opacity: 0;  
+  }
+  100%{
+      transform:scale(2);
+      opacity: 0;    
+  }
+}
+@keyframes box_light_animation{
+  60%{
+      transform:rotate(-30deg) translateX(-400%);
+  }
+  100%{
+      transform:rotate(-30deg) translateX(-400%);
+      opacity: 0;
+  }
+}
+@keyframes drop{
+  to{
+      transform:translateY(100vh) rotate(360deg);
+  }
+}
+
+#first_screen{
+  position: absolute;
+  top:120%;
+  left:0;
+  width:100%;
+  height:300%;
+  animation: fisrt_screen_animation 1.9s linear var(--start_of_1st_animation);
+}
+@keyframes fisrt_screen_animation{
+  to{
+      transform:translateY(-400%);
+  }
+}
+.triangle{
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 15vmax 30vmax 15vmax;
+  border-color: transparent transparent #007bff transparent;
+}
+
+#second_screen{
+  z-index: 20;
+}
+.circle{
+  position: absolute;
+  border-radius: 50%;
+  width:200vmax;
+  height:200vmax;
+  transform: scale(0);
+}
+#circle1{
+  top:calc(16% - 200vmax / 2);
+  left:calc(50% - 200vmax / 2);
+  animation: expand 1250ms ease calc(var(--start_of_2nd_animation) + 0ms);
+  background-color: var(--circle1);
+}
+#circle2{
+  top:calc(30% - 200vmax / 2);
+  left:calc(50% - 200vmax / 2);
+  animation: expand 1250ms ease calc(var(--start_of_2nd_animation) + 94ms);
+  background-color: var(--bg-col);
+}
+#circle3{
+  top:calc(16% - 200vmax / 2);
+  left:calc(50% - 200vmax / 2);
+  animation: expand 1250ms ease calc(var(--start_of_2nd_animation) + 188ms);
+  background-color: var(--circle3);
+}
+
+#circle4{
+  top:calc(50% - 200vmax / 2);
+  left:calc(50% - 200vmax / 2);
+  animation: expand 1875ms ease calc(var(--start_of_2nd_animation) + 250ms);
+  background-color: var(--bg-col);
+}
+#circle5{
+  top:calc(30% - 200vmax / 2);
+  left:calc(50% - 200vmax / 2);
+  animation: expand 1250ms ease calc(var(--start_of_2nd_animation) + 375ms);
+  background-color: var(--circle5);
+}
+#circle6{
+  top:calc(50% - 200vmax / 2);
+  left:calc(50% - 200vmax / 2);
+  animation: expand 1875ms ease calc(var(--start_of_2nd_animation) + 438ms);
+  background-color: var(--bg-col);
+}
+#circle7{
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  animation: expand 1875ms ease calc(var(--start_of_2nd_animation) + 538ms) forwards;
+  background-color: var(--bg-col);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 200%;
+}
+@keyframes expand{
+  to{
+      transform: scale(1);
+  }
+}
+
+@media (min-width:800px){
+  #main_text{
+      font-size:400%
+  }
+}
+#stars{
+  position: absolute;
+  bottom:10%;
+  width:100%;
+  height:30%;
+  display: flex;
+  justify-content: center;
+}
+
+.star{
+  margin-left: 16px;
+  margin-right:16px;
+  transform: scale(0);
+  animation: star_animation 200ms linear  forwards;
+  width:5vmax;
+  height:5vmax;
+}
+
+#star1{
+  animation-delay: calc(var(--start_of_2nd_animation) + 1838ms);
+}
+#star2{
+  animation-delay: calc(var(--start_of_2nd_animation) + 2038ms);
+}
+#star3{
+  animation-delay: calc(var(--start_of_2nd_animation) + 2538ms);
+}
+#star4{
+  animation-delay: calc(var(--start_of_2nd_animation) + 3138ms);
+}
+/*
+#star5{
+  animation-delay: calc(var(--start_of_2nd_animation) + 3738ms);
+}
+*/
+
+@keyframes star_animation{
+  to{
+      transform: scale(1);
+  }
+}
