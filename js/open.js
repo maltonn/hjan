@@ -30,7 +30,7 @@ let element=''
 let vote_num=0
 
 function VoteToScore(vote){
-    return Math.log(vote)/Math.log(1.5)+1
+    return Math.sqrt(vote)
 }
 
 function Lounch(data) {
@@ -212,7 +212,7 @@ Send(params,CallBack)
 function CallBack(res){
     data=res
     now_number.innerText = '現在登録されている属性は' + data.length + '個です！'
-    now_covered_number.innerText='（うち未開封'+(data.length-Object.keys(cookie).length)+'個）'
+    now_covered_number.innerText='（うち未開封'+(data.length-Object.keys(cookie).length+2)+'個）'/*なんかデフォルトで変な値が2個ある */
     let loader=document.getElementById('loader')
     if(loader){
       loader.style.display='None'
