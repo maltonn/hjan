@@ -29,8 +29,8 @@ let degree=0
 let element=''
 let vote_num=0
 
-function VoteToScore(vote){
-    return Math.sqrt(vote)
+function VoteToScore(vote,uv){
+    return Math.sqrt(vote)*uv
 }
 
 function Lounch(data) {
@@ -47,11 +47,11 @@ function Lounch(data) {
             
             let sum_vote=0
             for(let i=0;i<data.length;i++){
-                sum_vote+=VoteToScore(data[i]['vote'])
+                sum_vote+=VoteToScore(data[i]['vote'],data[i]['uv'])
             }
             let r=randint(sum_vote)
             for(let i=0;i<data.length;i++){
-                r-=VoteToScore(data[i]['vote'])
+                r-=VoteToScore(data[i]['vote'],data[i]['uv'])
                 if(r<0){
                     chosen=data[i]
                     break
