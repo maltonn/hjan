@@ -1,8 +1,6 @@
 import { Send } from './functions.js'
 loader.style.display = 'none'
 
-
-
 let params = {'sid':7}
 try {
   (decodeURI(location.href).split('?')[1]).split('&').forEach(e => params[e.split('=')[0]] = e.split('=')[1])
@@ -61,7 +59,11 @@ document.getElementById('send_btn').addEventListener('click', () => {
   }
   console.log(dic)
   dic['method']='add'
-
+  if(params['room']){
+    dic['room']=params['room']
+  }else{
+    dic['room']='default'
+  }
 
   if(!dic['elm']){
     return

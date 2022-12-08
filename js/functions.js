@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-analytics.js";
-import { getFirestore, doc, setDoc, updateDoc, increment,collection,getDocs  } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+import { getFirestore, doc, setDoc, updateDoc, increment,collection,getDocs,query,where  } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -64,12 +64,18 @@ export async function Send(dic, callback) {
         uv: 1,
         degree: Number(dic['degree']),
         warns: warns,
+        room: dic['room'],
       }).then().catch(err => console.log(err));
 
     }
     );
   }else if(dic['method']=='pick'){
-    const querySnapshot = await getDocs(collection(db, "main"));
+    let querySnapshot = null
+    if(!dic["room"]){
+      dic["room"]="default"
+    }
+    querySnapshot = await getDocs(query(collection(db, "main"), where("room", "==", dic['room'])));
+
     let L=[]
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
